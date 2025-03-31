@@ -44,12 +44,11 @@ async def send_log():
 
     while True:
         try:
-            # Tạo dữ liệu log giả lập
             log_data = {
-                "id": str(random.randint(100000, 999999)),
+                "username": random.choice(["maidung", "ngoctp"]),
                 "device_id": DEVICE_ID,
                 "name": random.choice(["John Doe", "Jane Smith", "Alice Johnson", "Bob Brown"]),
-                "photoUrl": "/placeholder.svg?height=40&width=40",
+                "photoUrl": "",
                 "timestamp": int(datetime.now().timestamp()),
                 "type": random.choice(["entry", "exit"]),
                 "apartment": random.choice(["A-1203", "B-402", "C-305", "D-101"]),
