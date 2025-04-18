@@ -27,7 +27,7 @@ async def send_log():
     async def connect_websocket():
         for attempt in range(5):
             try:
-                websocket = await websockets.connect(f"{WEBSOCKET_URL}/logs/{DEVICE_ID}")
+                websocket = await websockets.connect(f"ws://103.14.227.202:5500/logs/{DEVICE_ID}")
                 print(f"Connected to server as {ENDPOINT}-{DEVICE_ID}")
                 return websocket
             except Exception as e:
