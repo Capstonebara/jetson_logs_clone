@@ -5,8 +5,8 @@ import hashlib
 import zipfile
 
 JETSON_EMBED_PATH = "./embeds/"
-SERVER_SYNC_API = "http://localhost:5500/sync-metadata"
-SERVER_DOWNLOAD_API = "http://localhost:5500/download-embeds/"
+SERVER_SYNC_API = "http://api.fptuaiclub.me/sync-metadata"
+SERVER_DOWNLOAD_API = "http://api.fptuaiclub.me/download-embeds/"
 
 # ANSI màu
 def color(text, code):
@@ -40,11 +40,19 @@ def get_local_state():
                     "md5": md5
                 }
             except Exception as e:
-                print(color(f"⚠️ Error reading {folder}: {e}", YELLOW))
+                print(color(f"Error reading {folder}: {e}", YELLOW))
     return state
 
 def download_and_extract(id, name):
     zip_name = f"{id}_[{name}].zip"
+    folder_name = f"{id}_[{name}]"
+    folder_path = os.path.join(JETSON_EMBED_PATH, folder_name)
+
+    # XÓA THƯ MỤC CŨ TRƯỚC KHI GIẢI NÉN (nếu tồn tại)
+    if os.path.exists(folder_path):
+        shutil.rmtree(folder_path)
+        print(color(f"Same id, same name, other MD5 -> Remove: {folder_name}", RED))
+
     url = f"{SERVER_DOWNLOAD_API}{id}" 
     r = requests.get(url)
     if r.status_code == 200:
@@ -53,12 +61,12 @@ def download_and_extract(id, name):
         with zipfile.ZipFile(zip_name, "r") as zip_ref:
             zip_ref.extractall(JETSON_EMBED_PATH)
         os.remove(zip_name)
-        print(color(f"✅ Downloaded & extracted: {zip_name}", GREEN))
+        print(color(f"Downloaded & extracted: {zip_name}", GREEN))
     else:
-        print(color(f"❌ Failed to download {zip_name}: {r.status_code}", RED))
+        print(color(f"Failed to download {zip_name}: {r.status_code}", RED))
 
 def sync():
-    print(color("🔄 Starting sync...", CYAN))
+    print(color("Starting sync...", CYAN))
     os.makedirs(JETSON_EMBED_PATH, exist_ok=True)
 
     server_data = requests.get(SERVER_SYNC_API).json()
@@ -93,7 +101,7 @@ def sync():
         path = os.path.join(JETSON_EMBED_PATH, folder)
         if os.path.exists(path):
             shutil.rmtree(path)
-            print(color(f"🗑️ Deleted (due to change): {folder}", RED))
+            print(color(f"Deleted (due to change): {folder}", RED))
 
     for id, name in to_download:
         download_and_extract(id, name)
@@ -103,15 +111,15 @@ def sync():
             os.path.join(JETSON_EMBED_PATH, old_name),
             os.path.join(JETSON_EMBED_PATH, new_name)
         )
-        print(color(f"🔁 Renamed: {old_name} -> {new_name}", YELLOW))
+        print(color(f"Renamed: {old_name} -> {new_name}", YELLOW))
 
     removed_ids = list(local_ids - server_ids)
     for id in removed_ids:
         old_name = local_data[id]["folder"]
         shutil.rmtree(os.path.join(JETSON_EMBED_PATH, old_name))
-        print(color(f"🗑️ Deleted: {old_name}", RED))
+        print(color(f"Deleted: {old_name}", RED))
 
-    print(color("✅ Sync complete.", GREEN))
+    print(color("Sync complete.", GREEN))
 
 if __name__ == "__main__":
     sync()
