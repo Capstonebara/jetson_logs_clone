@@ -2,17 +2,17 @@ import asyncio
 import websockets
 import json
 from datetime import datetime
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import random
 import os
 
 # Load environment variables (if needed)
-load_dotenv()
+# load_dotenv()
 
 # Device ID and WebSocket server URL
 DEVICE_ID = input("Enter device ID: ")
-WEBSOCKET_URL = os.getenv("WEBSOCKET_URL")
-ENDPOINT = os.getenv("ENDPOINT")
+# WEBSOCKET_URL = os.getenv("WEBSOCKET_URL")
+ENDPOINT = "123"
 
 async def send_log():
     async def send_ping(websocket):
