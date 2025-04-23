@@ -3,6 +3,7 @@ import shutil
 import requests
 import hashlib
 import zipfile
+import time
 
 JETSON_EMBED_PATH = "./embeds/"
 SERVER_SYNC_API = "http://api.fptuaiclub.me/sync-metadata"
@@ -124,4 +125,13 @@ def sync():
     print(color("Sync complete.", GREEN))
 
 if __name__ == "__main__":
-    sync()
+    try:
+        print(color("Starting sync loop. Press Ctrl+C to exit.", CYAN))
+        while True:
+            sync()
+            print(color(f"Next sync in 30 seconds...", CYAN))
+            time.sleep(30)
+    except KeyboardInterrupt:
+        print(color("\nSync loop stopped by user.", YELLOW))
+    except Exception as e:
+        print(color(f"Error in sync loop: {e}", RED))
