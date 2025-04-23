@@ -23,8 +23,10 @@ def calc_local_md5(folder_path):
         for file in sorted(files):
             path = os.path.join(root, file)
             with open(path, 'rb') as f:
-                while chunk := f.read(8192):
+                chunk = f.read(8192)
+                while chunk:
                     md5.update(chunk)
+                    chunk = f.read(8192)
     return md5.hexdigest()
 
 def get_local_state():
