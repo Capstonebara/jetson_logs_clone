@@ -1,6 +1,6 @@
-dotenv==0.9.9
-python-dotenv==1.0.1
-setuptools==75.8.0
-websocket-client==1.8.0
-websockets==15.0.1
-wheel==0.45.1
+certifi==2021.5.30
+charset-normalizer==2.0.12
+idna==3.10
+requests==2.27.1
+urllib3==1.26.20
+websockets==9.1

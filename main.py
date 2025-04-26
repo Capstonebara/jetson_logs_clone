@@ -1,19 +1,14 @@
-# import asyncio
+import asyncio
 import websockets
 import json
 from datetime import datetime
-# from dotenv import load_dotenv
 import random
-import os
-import time
-
-# Load environment variables (if needed)
-# load_dotenv()
 
 # Device ID and WebSocket server URL
 DEVICE_ID = input("Enter device ID: ")
-# WEBSOCKET_URL = os.getenv("WEBSOCKET_URL")
-ENDPOINT = "123"
+WEBSOCKET_URL = "wss://api.fptuaiclub.me/logs/"
+# WEBSOCKET_URL = "ws://localhost:5500/logs/"
+
 
 async def send_log():
     async def send_ping(websocket):
@@ -28,8 +23,8 @@ async def send_log():
     async def connect_websocket():
         for attempt in range(5):
             try:
-                websocket = await websockets.connect(f"wss://api.fptuaiclub.me/logs/{DEVICE_ID}")
-                print(f"Connected to server as {ENDPOINT}-{DEVICE_ID}")
+                websocket = await websockets.connect(f"{WEBSOCKET_URL}{DEVICE_ID}")
+                print(f"Connected to server as {WEBSOCKET_URL}{DEVICE_ID}")
                 return websocket
             except Exception as e:
                 print(f"Connection failed (attempt {attempt + 1}): {e}")
@@ -61,25 +56,23 @@ async def send_log():
         print("Failed to connect to server after multiple attempts.")
         return
 
-    asyncio.create_task(send_ping(websocket))
+    asyncio.ensure_future(send_ping(websocket)) 
 
     while True:
         try:
             # Send log data as JSON text
             log_data = {
-                "username": random.choice(["maidung", "ngoctp"]),
+                "id": random.randint(1,5),
                 "device_id": DEVICE_ID,
-                "name": random.choice(["John Doe", "Jane Smith", "Alice Johnson", "Bob Brown"]),
                 "timestamp": int(datetime.now().timestamp()),
                 "type": random.choice(["entry", "exit"]),
-                "apartment": random.choice(["A-1203", "B-402", "C-305", "D-101"]),
             }
             
             await websocket.send(json.dumps(log_data))
             print("Log sent:", log_data)
 
             # Send an image after sending the log (optional)
-            image_path = f"./data/{random.randint(1, 2)}.jpg"  # Random image 1 or 2
+            image_path = f"./data/{random.randint(1, 2)}.jpg"
             await send_image(websocket, image_path)
 
             # Wait before sending the next log and image
@@ -95,4 +88,5 @@ async def send_log():
             break
 
 # Run the WebSocket client
-asyncio.run(send_log())
+loop = asyncio.get_event_loop()
+loop.run_until_complete(send_log())

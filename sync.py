@@ -8,6 +8,7 @@ import time
 JETSON_EMBED_PATH = "./embeds/"
 SERVER_SYNC_API = "http://api.fptuaiclub.me/sync-metadata"
 SERVER_DOWNLOAD_API = "http://api.fptuaiclub.me/download-embeds/"
+TIME_INTERVAL = 60  # seconds
 
 # ANSI màu
 def color(text, code):
@@ -129,8 +130,8 @@ if __name__ == "__main__":
         print(color("Starting sync loop. Press Ctrl+C to exit.", CYAN))
         while True:
             sync()
-            print(color(f"Next sync in 30 seconds...", CYAN))
-            time.sleep(30)
+            print(color(f"Next sync in {TIME_INTERVAL} seconds...", CYAN))
+            time.sleep(TIME_INTERVAL)
     except KeyboardInterrupt:
         print(color("\nSync loop stopped by user.", YELLOW))
     except Exception as e:
